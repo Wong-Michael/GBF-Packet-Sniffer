@@ -1,0 +1,33 @@
+    // Put this in the fiddler script
+    static var counter = 0;
+    static function OnBeforeResponse(oSession: Session)
+    {	
+        //if (m_ShowTimestamp){
+        //oSession["ui-customcolumn"] = DateTime.Now.ToString("H:mm:ss.ffff") + " " + oSession["ui-customcolumn"]; 
+        //}
+
+        //if (m_ShowTTLB){
+        //oSession["ui-customcolumn"] = oSession.oResponse.iTTLB + "ms " + oSession["ui-customcolumn"]; 
+        //}
+
+        if (m_Hide304s && oSession.responseCode == 304){
+            oSession["ui-hide"] = "true";
+        }
+		
+        show_only_content_types_html_and_json(oSession);
+
+        wellright__customcolumn_monitor_reward_panel(oSession);
+        
+        
+        // Granblue Rule
+        if (oSession.PathAndQuery.ToLower().Contains("rest/multiraid"))
+        {
+            if(oSession.responseCode == 200)
+            {
+                var directory2 = "C:\\gbf";
+                var path2: String = System.IO.Path.Combine(directory2, counter);
+                oSession.SaveResponseBody(path2 + ".txt");
+                counter++;
+            }
+        }
+    }
